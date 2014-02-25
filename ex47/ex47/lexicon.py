@@ -1,50 +1,36 @@
-def scan(par):
-	direction = [('direction', 'north'),
-					  ('direction', 'south'),
-					  ('direction', 'east')]
-	verbs = [('verb', 'go'),
-					  ('verb', 'kill'),
-					  ('verb', 'eat')]
-	stops = [('stop', 'the'),
-					  ('stop', 'in'),
-					  ('stop', 'of')]
-	nouns = [('noun', 'bear'),
-					  ('noun', 'princess')]
+import re
 
-	l = par.split()
+def scan(par):
+	direction = ['north', 'south', 'west', 'east', 'left', 'right',
+			     'down', 'up', 'back']
+	verbs = ['go', 'kill', 'stop', 'eat']
+	stops = ['the', 'in', 'of', 'from', 'at', 'it']
+	nouns = ['door', 'bear', 'princess', 'cabinet']
+	
+	words = par.split(' ')
+	pattern = re.compile(r'\d+')
+
 	ret = []
-	for i in l:
-		if None != convert_number(i):
-			ret.append(('number', convert_number(i)))
+	for word in words:
+		num = pattern.match(word)
+		if num:
+			sentence = ('number', convert_number(word))
+			ret.append(sentence)
+		elif word in direction:
+			sentence = ('direction', word)
+			ret.append(sentence)
+		elif word in verbs:
+			sentence = ('verb', word)
+			ret.append(sentence)
+		elif word in stops:
+			sentence = ('stop', word)
+			ret.append(sentence)
+		elif word in nouns:
+			sentence = ('noun', word)
+			ret.append(sentence)
 		else:
-			used = True
-			for t in direction:
-				if i == t[1]:
-					ret.append(t)
-					used = False
-					break
-				else:
-					pass
-			for t in stops:
-				if i == t[1]:
-					ret.append(t)
-					used = False
-				else:
-					pass
-			for t in nouns:
-				if i == t[1]:
-					ret.append(t)
-					used = False
-				else:
-					pass
-			for t in verbs:
-				if i == t[1]:
-					ret.append(t)
-					used = False
-				else:
-					pass
-			if used:
-				ret.append(("error", i))
+			sentence = ('error', word)
+			ret.append(sentence)
 	return ret
 
 #convert s to int
